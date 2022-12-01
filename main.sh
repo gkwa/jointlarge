@@ -44,6 +44,22 @@ flux create helmrelease podinfo \
      --chart=podinfo \
      --export >app-cluster/podinfo-helm-chart.yaml
 
+# redis
+flux create source helm bitnami \
+     --url=https://charts.bitnami.com/bitnami \
+     --interval=20m \
+     --namespace flux-system \
+     --export >app-cluster/bitnami-helm-repo.yaml
+
+flux create helmrelease redis \
+     --source=HelmRepository/bitnami \
+     --chart=redis  \
+     --release-name=redis \
+     --create-target-namespace \
+     --chart-version="17.3.13" \
+     --target-namespace=test \
+     --export >app-cluster/helmrelease-redis.yaml
+
 git add -A
 git commit -am test
 git push
