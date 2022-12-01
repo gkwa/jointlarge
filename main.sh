@@ -7,9 +7,15 @@
 set -u
 set -e
 
-repo=helm-infra$(date +%s)
+[ -z "$GITHUB_TOKEN" ] && echo GITHUB_TOKEN not set && exit 1
+
 kind delete cluster --name jointlarge
 kind create cluster --name jointlarge
+
+kubectl get events --watch -A &
+
+repo=helm-infra$(date +%s)
+
 flux check --pre
 flux bootstrap github \
      --owner=$GITHUB_USER \
@@ -19,8 +25,11 @@ flux bootstrap github \
      --personal
 
 git clone git@github.com:TaylorMonacelli/$repo
+
 cd $repo
 mkdir -p app-cluster/
+
+# podinfo
 flux create source helm podinfo \
      --url=https://stefanprodan.github.io/podinfo \
      --interval=20m \
@@ -30,15 +39,11 @@ flux create source helm podinfo \
 flux create helmrelease podinfo \
      --source=HelmRepository/podinfo \
      --release-name=podinfo \
-     --target-namespace=default \
+     --create-target-namespace \
+     --target-namespace=test \
      --chart=podinfo \
-     --target-namespace=default \
-     --chart-version=">5.0.0" \
      --export >app-cluster/podinfo-helm-chart.yaml
 
 git add -A
-git commit -am t
+git commit -am test
 git push
-
-sleep 60
-kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=podinfo
