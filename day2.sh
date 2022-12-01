@@ -18,8 +18,8 @@ repo=helm-infra1669925171
 
 flux check --pre
 flux bootstrap github \
-     --owner=$GITHUB_USER \
-     --repository=$repo \
-     --branch=main \
-     --path=app-cluster \
-     --personal
+    --owner="$GITHUB_USER" \
+    --repository="$repo" \
+    --branch=main \
+    --path=app-cluster \
+    --personal
