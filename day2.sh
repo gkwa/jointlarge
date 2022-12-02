@@ -14,7 +14,7 @@ kind create cluster --name jointlarge
 
 kubectl get events --watch -A &
 
-repo=helm-infra1669925171
+repo=helm-infra1669928850
 
 flux check --pre
 flux bootstrap github \

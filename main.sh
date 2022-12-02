@@ -58,7 +58,7 @@ flux create helmrelease redis \
     --create-target-namespace \
     --chart-version="17.3.13" \
     --target-namespace=test \
-    --export >app-cluster/helmrelease-redis.yaml
+    --export >app-cluster/redis-helm-chart.yaml
 
 git add -A
 git commit -am test
